@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/media/windows2/LIS Internship/Ordermatching/OrderBook.cpp
+OrderBook.h
+/media/windows2/LIS Internship/Ordermatching/OrderBook.h
+
+/media/windows2/LIS Internship/Ordermatching/OrderBook.h
+
+/media/windows2/LIS Internship/Ordermatching/main.cpp
+iostream
+-
+
