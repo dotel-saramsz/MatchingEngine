@@ -23,6 +23,7 @@ public:
     long demandQty;
     long supplyQty;
     long tradableQty;
+    long unmatchedQty;
 
     TableRow(float price,OrderPoint* order,long buyQty,long sellQty);
 

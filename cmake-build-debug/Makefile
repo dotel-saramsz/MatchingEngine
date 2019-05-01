@@ -150,6 +150,33 @@ AVLTable.cpp.s:
 	$(MAKE) -f CMakeFiles/Ordermatching.dir/build.make CMakeFiles/Ordermatching.dir/AVLTable.cpp.s
 .PHONY : AVLTable.cpp.s
 
+FileReader.o: FileReader.cpp.o
+
+.PHONY : FileReader.o
+
+# target to build an object file
+FileReader.cpp.o:
+	$(MAKE) -f CMakeFiles/Ordermatching.dir/build.make CMakeFiles/Ordermatching.dir/FileReader.cpp.o
+.PHONY : FileReader.cpp.o
+
+FileReader.i: FileReader.cpp.i
+
+.PHONY : FileReader.i
+
+# target to preprocess a source file
+FileReader.cpp.i:
+	$(MAKE) -f CMakeFiles/Ordermatching.dir/build.make CMakeFiles/Ordermatching.dir/FileReader.cpp.i
+.PHONY : FileReader.cpp.i
+
+FileReader.s: FileReader.cpp.s
+
+.PHONY : FileReader.s
+
+# target to generate assembly for a file
+FileReader.cpp.s:
+	$(MAKE) -f CMakeFiles/Ordermatching.dir/build.make CMakeFiles/Ordermatching.dir/FileReader.cpp.s
+.PHONY : FileReader.cpp.s
+
 MapTable.o: MapTable.cpp.o
 
 .PHONY : MapTable.o
@@ -324,6 +351,9 @@ help:
 	@echo "... AVLTable.o"
 	@echo "... AVLTable.i"
 	@echo "... AVLTable.s"
+	@echo "... FileReader.o"
+	@echo "... FileReader.i"
+	@echo "... FileReader.s"
 	@echo "... MapTable.o"
 	@echo "... MapTable.i"
 	@echo "... MapTable.s"

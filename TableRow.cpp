@@ -10,6 +10,9 @@ TableRow::TableRow(float price, OrderPoint *order, long buyQty, long sellQty) {
     this->sellQty = sellQty;
     orders.push_back(order);    //adds the first order to the vector of orders
     //Note: demandQty and supplyQty are set on the forward and reverse pass after all orders have been entered.
+    supplyQty = 0;
+    demandQty = 0;
+    tradableQty = 0;
 }
 
 void TableRow::addOrder(OrderPoint *order) {

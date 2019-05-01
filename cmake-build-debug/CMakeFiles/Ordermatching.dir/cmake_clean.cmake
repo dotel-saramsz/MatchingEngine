@@ -6,6 +6,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/Ordermatching.dir/MapTable.cpp.o"
   "CMakeFiles/Ordermatching.dir/TableRow.cpp.o"
   "CMakeFiles/Ordermatching.dir/OrderPoint.cpp.o"
+  "CMakeFiles/Ordermatching.dir/FileReader.cpp.o"
   "Ordermatching.pdb"
   "Ordermatching"
 )

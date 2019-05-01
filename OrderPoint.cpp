@@ -5,7 +5,7 @@
 #include <cstring>
 #include "OrderPoint.h"
 
-OrderPoint::OrderPoint(bool type, string companyID, float price, long shareQty, long clientID) {
+OrderPoint::OrderPoint(orderType type, string companyID, float price, long shareQty, long clientID) {
     //assign values
     this->type = type;
     this->companyID = companyID;    //potential for performance tuning
@@ -21,9 +21,9 @@ OrderPoint::OrderPoint(bool type, string companyID, float price, long shareQty, 
 }
 
 long OrderPoint::getOrderTime() {
-    //retrieve the current system time as millis since epoch and return it
-    chrono::milliseconds ms = chrono::duration_cast< chrono::milliseconds >(
+    //retrieve the current system time as nanosecs since epoch and return it
+    chrono::nanoseconds ns = chrono::duration_cast< chrono::nanoseconds >(
             chrono::system_clock::now().time_since_epoch()
     );
-    return ms.count();
+    return ns.count();
 }

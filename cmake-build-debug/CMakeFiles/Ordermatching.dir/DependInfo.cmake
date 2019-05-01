@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/media/windows2/LIS Internship/Ordermatching/AVLTable.cpp" "/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/Ordermatching.dir/AVLTable.cpp.o"
+  "/media/windows2/LIS Internship/Ordermatching/FileReader.cpp" "/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/Ordermatching.dir/FileReader.cpp.o"
   "/media/windows2/LIS Internship/Ordermatching/MapTable.cpp" "/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/Ordermatching.dir/MapTable.cpp.o"
   "/media/windows2/LIS Internship/Ordermatching/OrderBook.cpp" "/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/Ordermatching.dir/OrderBook.cpp.o"
   "/media/windows2/LIS Internship/Ordermatching/OrderPoint.cpp" "/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/Ordermatching.dir/OrderPoint.cpp.o"
