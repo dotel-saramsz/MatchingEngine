@@ -15,7 +15,7 @@ class OrderTable {
 protected:
     //Common members for any implementation of the order table
     float equilibriumPrice;
-    vector<pair<float,long> > equilibriumOrders;    //stores those orders which have the maximal tradable qty in their tablerow
+    vector<pair<float,long> > equilibriumRows;    //stores those orders which have the maximal tradable qty in their tablerow
     long maxTradableQty;
 
 public:

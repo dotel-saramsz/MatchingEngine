@@ -153,12 +153,12 @@ long AVLTable::reverseparse(AVLTable::Node *node, long oldDemand) {
     //case 1
     if (node->data->tradableQty > maxTradableQty) {
         maxTradableQty = node->data->tradableQty;
-        equilibriumOrders.clear();
-        equilibriumOrders.push_back(make_pair(node->data->price,node->data->unmatchedQty));
+        equilibriumRows.clear();
+        equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
     }
     //case 2
     else if (node->data->tradableQty == maxTradableQty) {
-        equilibriumOrders.push_back(make_pair(node->data->price,node->data->unmatchedQty));
+        equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
     }
     //case 3 and 4 can be added after prev day closing price is added
     cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
@@ -175,13 +175,13 @@ void AVLTable::calculateEQprice() {
     long totalDemand = reverseparse(treeRoot,0);
     cout<<"The cumulative demand is: "<<totalDemand<<endl;
     //calculate equilibrium price:
-    if(equilibriumOrders.size() == 1) {
-        equilibriumPrice = equilibriumOrders.back().first;
+    if(equilibriumRows.size() == 1) {
+        equilibriumPrice = equilibriumRows.back().first;
     }
     else {
         vector<pair<float,long> >::iterator itr;
-        long unmatchedQty = abs(equilibriumOrders.front().second);
-        for(itr = equilibriumOrders.begin(); itr != equilibriumOrders.end(); itr++) {
+        long unmatchedQty = abs(equilibriumRows.front().second);
+        for(itr = equilibriumRows.begin(); itr != equilibriumRows.end(); itr++) {
             if(abs(itr->second)<unmatchedQty) {
                 unmatchedQty = abs(itr->second);
                 equilibriumPrice = itr->first;
