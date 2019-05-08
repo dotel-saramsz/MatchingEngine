@@ -11,13 +11,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ebcb7ee2-d040-4a36-af36-fac16661a860" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AVLTable.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/AVLTable.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/OrderTable.h" beforeDir="false" afterPath="$PROJECT_DIR$/OrderTable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Ordermatching.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/Ordermatching.dir/CXX.includecache" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-    </list>
+    <list default="true" id="ebcb7ee2-d040-4a36-af36-fac16661a860" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/cmake-build-debug/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -242,16 +236,15 @@
       <workItem from="1556724872669" duration="6957000" />
       <workItem from="1556987922545" duration="99000" />
       <workItem from="1557132112371" duration="3367000" />
-      <workItem from="1557154446586" duration="609000" />
+      <workItem from="1557154446586" duration="1074000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="75533000" />
+    <option name="totallyTimeSpent" value="75998000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="48" y="-11" width="1319" height="780" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.30369788" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
