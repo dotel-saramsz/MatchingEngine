@@ -1,4 +1,0 @@
-"/media/windows2/Education/Programming Tools/clion-2018.3.4/bin/cmake/linux/bin/cmake" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" "/media/windows2/LIS Internship/Ordermatching"
--- Configuring done
--- Generating done
--- Build files have been written to: /media/windows2/LIS Internship/Ordermatching/cmake-build-debug

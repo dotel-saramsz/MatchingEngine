@@ -1,3 +1,0 @@
-/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/Ordermatching.dir
-/media/windows2/LIS Internship/Ordermatching/cmake-build-debug/CMakeFiles/edit_cache.dir
