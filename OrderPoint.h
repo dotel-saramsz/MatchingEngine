@@ -25,6 +25,7 @@ public:
     long shareQty;
     long clientID;
     long timestamp;
+    int testfile;
     // the timestamp is to be filled by ns.count() where ns is of type chrono::nanoseconds (nano seconds since epoch)
     OrderPoint(orderType type, string companyID, float price, long shareQty, long clientID);
 
