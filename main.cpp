@@ -13,6 +13,8 @@
 #include <string>
 #include <cstring>
 #include <chrono>
+#include <unistd.h>
+
 
 int main(int argc, char** argv) {
     long beginTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
@@ -25,7 +27,7 @@ int main(int argc, char** argv) {
         orderTable = new MapTable;
     }
 
-    FileReader orderFile = FileReader("/media/windows2/LIS Internship/Ordermatching/orders.txt");
+    FileReader orderFile = FileReader("orders.txt");
     orderFile.fillOrderTable(orderTable);
     long matchStartTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
 

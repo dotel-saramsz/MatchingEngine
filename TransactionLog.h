@@ -7,9 +7,19 @@
 #define ORDERMATCHING_TRANSACTIONLOG_H
 
 #include "Transaction.h"
+#include <fstream>
 
 class TransactionLog {
-    
+private:
+    TransactionLog();
+    TransactionLog(const TransactionLog&);
+    TransactionLog& operator=(const TransactionLog&);
+    static TransactionLog* loggerInstance;
+    fstream logfile;
+public:
+    static TransactionLog* Instance();
+    void saveToFile(Transaction*);
+
 };
 
 

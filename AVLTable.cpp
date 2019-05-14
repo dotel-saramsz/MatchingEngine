@@ -5,6 +5,7 @@
 #include "AVLTable.h"
 #include <iostream>
 #include "Transaction.h"
+#include "TransactionLog.h"
 
 using namespace std;
 
@@ -269,8 +270,9 @@ void AVLTable::matchPreOpen(BuyOrderBook *pendingB, SellOrderBook *pendingS) {
             matchedQty = buyOrder->shareQty; //same as sellOrder->shareQty
         }
         //create a Transaction object
-        Transaction transaction(buyOrder->orderID,sellOrder->orderID,buyOrder->companyID,equilibriumPrice,matchedQty);
-        transaction.display();
+        Transaction* transaction = new Transaction(buyOrder->orderID,sellOrder->orderID,buyOrder->companyID,equilibriumPrice,matchedQty);
+        transaction->display();
+        TransactionLog::Instance()->saveToFile(transaction);
     }
 
     while(!eligibleBuy.empty()) {
