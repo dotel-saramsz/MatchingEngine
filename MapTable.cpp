@@ -240,3 +240,7 @@ void MapTable::calculateEQprice() {
     cout<<"[MAP]The equilibrium price is: "<<equilibriumPrice<<endl;
 
 }
+
+void MapTable::matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) {
+
+}

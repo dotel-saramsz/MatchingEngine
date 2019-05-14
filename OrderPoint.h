@@ -20,12 +20,12 @@ public:
     string orderID;   //TODO: automatically generate order ID before inserting into the table row in preopen
     enum orderType {BUY,SELL};   //0: BUY, 1: SELL
     orderType type;
-    string companyID;  //In assumption that company ID wont be more than 6 characters. Use strcpy to copy by value
+    string companyID;
     float price;
     long shareQty;
     long clientID;
     long timestamp;
-    int testfile;
+
     // the timestamp is to be filled by ns.count() where ns is of type chrono::nanoseconds (nano seconds since epoch)
     OrderPoint(orderType type, string companyID, float price, long shareQty, long clientID);
 

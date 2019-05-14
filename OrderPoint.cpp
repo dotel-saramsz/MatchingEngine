@@ -13,7 +13,7 @@ OrderPoint::OrderPoint(orderType type, string companyID, float price, long share
     this->shareQty = shareQty;
     this->clientID = clientID;
 
-    //set timestamp (in millis)
+    //set timestamp (in nanos)
     timestamp = getOrderTime();
 
     //set orderID as companyID<orderedTimestamp>

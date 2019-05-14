@@ -53,6 +53,9 @@ public:
 
     AVLTable();
 
+    void matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) override;
+
+    void categorizeOrder(Node* node);
 
 };
 

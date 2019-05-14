@@ -4,12 +4,13 @@
 
 #include "AVLTable.h"
 #include <iostream>
+#include "Transaction.h"
 
 using namespace std;
 
 void AVLTable::insert(OrderPoint* orderPoint) {
     treeRoot = insert(treeRoot,nullptr,orderPoint);
-    cout<<"[AVL] Inserted/Updated treeNode with Price= "<<orderPoint->price<<endl;
+    cout<<"[AVL] Inserted Order: "<<orderPoint->type<<" | "<<orderPoint->orderID<<" | "<<orderPoint->price<<" | "<<orderPoint->shareQty<<endl;
 }
 
 void AVLTable::remove(OrderPoint* orderPoint) {
@@ -34,7 +35,7 @@ AVLTable::Node* AVLTable::insert(Node* root, Node* parent,OrderPoint* data) {
         root->parent = parent;
         root->data = row;
         root->height = 0;
-        cout<<"[AVL] New TableRow inserted at price: "<<data->price<<endl;
+//        cout<<"[AVL] New TableRow inserted at price: "<<data->price<<endl;
     }
     //case2: if the orderprice is less than price in root's data element
     else if(data->price < root->data->price) {
@@ -71,7 +72,7 @@ AVLTable::Node* AVLTable::insert(Node* root, Node* parent,OrderPoint* data) {
         root->data->addOrder(data);
         root->data->buyQty += data->shareQty * (1-data->type);
         root->data->sellQty += data->shareQty * data->type;
-        cout<<"[AVL] Chaining of order at TableRow, orderID: "<<data->orderID<<endl;
+//        cout<<"[AVL] Chaining of order at TableRow, orderID: "<<data->orderID<<endl;
     }
 
     root->height = std::max(getHeight(root->left),getHeight(root->right)) + 1;
@@ -177,17 +178,113 @@ void AVLTable::calculateEQprice() {
     //calculate equilibrium price:
     if(equilibriumRows.size() == 1) {
         equilibriumPrice = equilibriumRows.back().first;
+        unmatchedQty = equilibriumRows.back().second;
     }
     else {
         vector<pair<float,long> >::iterator itr;
-        long unmatchedQty = abs(equilibriumRows.front().second);
+        unmatchedQty = equilibriumRows.front().second;
         for(itr = equilibriumRows.begin(); itr != equilibriumRows.end(); itr++) {
-            if(abs(itr->second)<unmatchedQty) {
-                unmatchedQty = abs(itr->second);
+            if(abs(itr->second) < abs(unmatchedQty)) {
+                unmatchedQty = itr->second;
                 equilibriumPrice = itr->first;
             }
         }
     }
     cout<<"The equilibrium price is: "<<equilibriumPrice<<endl;
 }
+
+void AVLTable::categorizeOrder(AVLTable::Node *node) {
+    if(node == nullptr){
+        return;
+    }
+    //traverse to the left child
+    categorizeOrder(node->left);
+    //Process the current node. Each node can have multiple orders.
+    //Check if the node is eq node or not and categorize accordingly
+    if(node->data->price < equilibriumPrice) {
+        //add to category B or C (Eligible sell or Pending Buy)
+        for (auto order:node->data->orders) {   //new range based for-loop in C++
+            if(order->type == OrderPoint::BUY) {
+                pendingBuy->push(order);
+            }
+            else {
+                eligibleSell.push_back(order);
+            }
+        }
+    }
+    else if(node->data->price > equilibriumPrice) {
+        //add to category A or D (Eligible Buy or Pending Sell)
+        for (auto order:node->data->orders) {
+            if(order->type == OrderPoint::BUY) {
+                eligibleBuy.push_back(order);
+            }
+            else {
+                pendingSell->push(order);
+            }
+        }
+    }
+    else {
+        //add to A or B (Eligible buy or Eligible sell)
+        for (auto order:node->data->orders) {
+            if(order->type == OrderPoint::BUY) {
+                eligibleBuy.push_back(order);
+            }
+            else {
+                eligibleSell.push_back(order);
+            }
+        }
+    }
+    //traverse to the right child
+    categorizeOrder(node->right);
+}
+
+void AVLTable::matchPreOpen(BuyOrderBook *pendingB, SellOrderBook *pendingS) {
+    pendingBuy = pendingB;
+    pendingSell = pendingS;
+    //inorder traversal through the tree to separate the orders into the 4 categories:
+    //1.Eligible Buy(Vec) 2.Eligible Sell(Vec) 3.Pending Buy(BuyOrderBook) 4.Pending Sell(SellOrderBook)
+    categorizeOrder(treeRoot);
+    //match the orders
+    while(!eligibleBuy.empty() && !eligibleSell.empty()) {
+        //match the orders until either of the containers get emptied
+        OrderPoint* buyOrder = eligibleBuy.back();
+        OrderPoint* sellOrder = eligibleSell.back();
+        eligibleBuy.pop_back();
+        eligibleSell.pop_back();
+        //handle complete or partial transaction
+        long matchedQty;
+        if(buyOrder->shareQty > sellOrder->shareQty) {
+            //buy order is partially filled
+            matchedQty = sellOrder->shareQty;
+            buyOrder->shareQty -= matchedQty;
+            eligibleBuy.push_back(buyOrder);
+        }
+        else if(buyOrder->shareQty < sellOrder->shareQty) {
+            //sell order is partially filled
+            matchedQty = buyOrder->shareQty;
+            sellOrder->shareQty -= matchedQty;
+            eligibleSell.push_back(sellOrder);
+        }
+        else {
+            matchedQty = buyOrder->shareQty; //same as sellOrder->shareQty
+        }
+        //create a Transaction object
+        Transaction transaction(buyOrder->orderID,sellOrder->orderID,buyOrder->companyID,equilibriumPrice,matchedQty);
+        transaction.display();
+    }
+
+    while(!eligibleBuy.empty()) {
+        //some buy orders couldn't be matched. So, add them as pending buy orders
+        pendingBuy->push(eligibleBuy.back());
+        eligibleBuy.pop_back();
+    }
+
+    while(!eligibleSell.empty()) {
+        //some sell orders couldn't be matched. So, add them as pending sell orders
+        pendingSell->push(eligibleSell.back());
+        eligibleSell.pop_back();
+    }
+
+}
+
 

@@ -56,6 +56,8 @@ public:
     long reverseparse(Node *, long);
 
     MapTable(); //constructor
+
+    void matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) override;
 };
 
 
