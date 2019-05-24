@@ -6,6 +6,9 @@
 #include <iostream>
 #include "Transaction.h"
 #include "TransactionLog.h"
+#include <chrono>
+
+extern long matchStartTime;
 
 using namespace std;
 
@@ -269,9 +272,14 @@ void AVLTable::matchPreOpen(BuyOrderBook *pendingB, SellOrderBook *pendingS) {
         else {
             matchedQty = buyOrder->shareQty; //same as sellOrder->shareQty
         }
+
         //create a Transaction object
         Transaction* transaction = new Transaction(buyOrder->orderID,sellOrder->orderID,buyOrder->companyID,equilibriumPrice,matchedQty);
         transaction->display();
+
+        long endTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
+        cout<<"Time taken for matching: "<<static_cast<double>(endTime-matchStartTime)/1000000<<" milliseconds"<<endl;
+
         TransactionLog::Instance()->saveToFile(transaction);
     }
 

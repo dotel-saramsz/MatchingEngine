@@ -15,6 +15,7 @@
 #include <chrono>
 #include <unistd.h>
 
+long matchStartTime;
 
 int main(int argc, char** argv) {
     long beginTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
@@ -29,7 +30,7 @@ int main(int argc, char** argv) {
 
     FileReader orderFile = FileReader("orders.txt");
     orderFile.fillOrderTable(orderTable);
-    long matchStartTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
+    matchStartTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
 
     //compute the cumulative supply in a forward parse through the sorted table
     //compute the cumulative demand in a backward parse through the sorted table
@@ -44,7 +45,7 @@ int main(int argc, char** argv) {
 
     //display the pending buy and sell orders
     long endTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
-    cout<<"Time taken for matching: "<<(endTime-matchStartTime)<<" nanoseconds"<<endl;
-    cout<<"Total time taken: "<<(endTime-beginTime)<<" nanoseconds"<<endl;
+//    cout<<"Time taken for matching: "<<(endTime-matchStartTime)<<" nanoseconds"<<endl;
+    cout<<"Total time taken: "<< static_cast<double>(endTime-beginTime)/1000000<<" milliseconds"<<endl;
     return 0;
 }

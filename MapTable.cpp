@@ -1,5 +1,9 @@
 #include "MapTable.h"
 #include <iostream>
+#include "TransactionLog.h"
+#include "Transaction.h"
+
+extern long matchStartTime;
 
 using namespace std;
 
@@ -241,6 +245,102 @@ void MapTable::calculateEQprice() {
 
 }
 
-void MapTable::matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) {
+void MapTable::categorizeOrder(MapTable::Node *node) {
+    if(node == nullptr){
+        return;
+    }
+    //traverse to the left child
+    categorizeOrder(node->left);
+    //Process the current node. Each node can have multiple orders.
+    //Check if the node is eq node or not and categorize accordingly
+    if(node->data->price < equilibriumPrice) {
+        //add to category B or C (Eligible sell or Pending Buy)
+        for (auto order:node->data->orders) {   //new range based for-loop in C++
+            if(order->type == OrderPoint::BUY) {
+                pendingBuy->push(order);
+            }
+            else {
+                eligibleSell.push_back(order);
+            }
+        }
+    }
+    else if(node->data->price > equilibriumPrice) {
+        //add to category A or D (Eligible Buy or Pending Sell)
+        for (auto order:node->data->orders) {
+            if(order->type == OrderPoint::BUY) {
+                eligibleBuy.push_back(order);
+            }
+            else {
+                pendingSell->push(order);
+            }
+        }
+    }
+    else {
+        //add to A or B (Eligible buy or Eligible sell)
+        for (auto order:node->data->orders) {
+            if(order->type == OrderPoint::BUY) {
+                eligibleBuy.push_back(order);
+            }
+            else {
+                eligibleSell.push_back(order);
+            }
+        }
+    }
+    //traverse to the right child
+    categorizeOrder(node->right);
+}
+
+void MapTable::matchPreOpen(BuyOrderBook *pendingB, SellOrderBook *pendingS) {
+    pendingBuy = pendingB;
+    pendingSell = pendingS;
+    //inorder traversal through the tree to separate the orders into the 4 categories:
+    //1.Eligible Buy(Vec) 2.Eligible Sell(Vec) 3.Pending Buy(BuyOrderBook) 4.Pending Sell(SellOrderBook)
+    categorizeOrder(treeRoot);
+    //match the orders
+    while(!eligibleBuy.empty() && !eligibleSell.empty()) {
+        //match the orders until either of the containers get emptied
+        OrderPoint* buyOrder = eligibleBuy.back();
+        OrderPoint* sellOrder = eligibleSell.back();
+        eligibleBuy.pop_back();
+        eligibleSell.pop_back();
+        //handle complete or partial transaction
+        long matchedQty;
+        if(buyOrder->shareQty > sellOrder->shareQty) {
+            //buy order is partially filled
+            matchedQty = sellOrder->shareQty;
+            buyOrder->shareQty -= matchedQty;
+            eligibleBuy.push_back(buyOrder);
+        }
+        else if(buyOrder->shareQty < sellOrder->shareQty) {
+            //sell order is partially filled
+            matchedQty = buyOrder->shareQty;
+            sellOrder->shareQty -= matchedQty;
+            eligibleSell.push_back(sellOrder);
+        }
+        else {
+            matchedQty = buyOrder->shareQty; //same as sellOrder->shareQty
+        }
+
+        //create a Transaction object
+        Transaction* transaction = new Transaction(buyOrder->orderID,sellOrder->orderID,buyOrder->companyID,equilibriumPrice,matchedQty);
+        transaction->display();
+
+        long endTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
+        cout<<"Time taken for matching: "<<static_cast<double>(endTime-matchStartTime)/1000000<<" milliseconds"<<endl;
+
+        TransactionLog::Instance()->saveToFile(transaction);
+    }
+
+    while(!eligibleBuy.empty()) {
+        //some buy orders couldn't be matched. So, add them as pending buy orders
+        pendingBuy->push(eligibleBuy.back());
+        eligibleBuy.pop_back();
+    }
+
+    while(!eligibleSell.empty()) {
+        //some sell orders couldn't be matched. So, add them as pending sell orders
+        pendingSell->push(eligibleSell.back());
+        eligibleSell.pop_back();
+    }
 
 }
