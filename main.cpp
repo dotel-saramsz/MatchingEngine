@@ -6,6 +6,7 @@
 #include "OrderTable.h"
 #include "AVLTable.h"
 #include "MapTable.h"
+#include "STLmapTable.h"
 #include "FileReader.h"
 #include "OrderContainer.h"
 #include "BuyOrderBook.h"
@@ -24,8 +25,11 @@ int main(int argc, char** argv) {
     if(strcmp(argv[1],"AVL") == 0 || strcmp(argv[1],"avl") == 0){
         orderTable = new AVLTable;
     }
-    else {
+    else if(strcmp(argv[1],"RBT") == 0 || strcmp(argv[1],"rbt") == 0){
         orderTable = new MapTable;
+    }
+    else {
+        orderTable = new STLmapTable;
     }
 
     FileReader orderFile = FileReader("orders.txt");

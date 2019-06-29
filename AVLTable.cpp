@@ -138,7 +138,7 @@ long AVLTable::forwardparse(Node *node, long oldSupply) {
     //do what you want with the current node: Display and add up the sellQty
     supply += node->data->sellQty;
     node->data->supplyQty = supply;
-    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
+//    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
     //go to the right subtree
     long newSupply = forwardparse(node->right, supply);
     return newSupply;
@@ -166,7 +166,7 @@ long AVLTable::reverseparse(AVLTable::Node *node, long oldDemand) {
         equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
     }
     //case 3 and 4 can be added after prev day closing price is added
-    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
+//    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
     //go to the right subtree
     long newDemand = reverseparse(node->left, demand);
     return newDemand;
