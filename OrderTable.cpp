@@ -13,7 +13,50 @@ extern long matchStartTime;
 
 OrderTable::OrderTable(){
     //base class constructor
-    //can't think of anything to put in here as of now
+    treeRoot = nullptr; //Initially, the treeRoot is NULL
+    maxTradableQty = 0;
+}
+
+long OrderTable::forwardparse(OrderTable::Node *node, long oldSupply) {
+    // inorder traverse (ascending order traverse) the order table and return the cumulative supply to the successor
+    if(node == nullptr)
+        return oldSupply;
+    long supply = forwardparse(node->left, oldSupply);
+    //do what you want with the current node: Display and add up the sellQty
+    supply += node->data->sellQty;
+    node->data->supplyQty = supply;
+//    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
+    //go to the right subtree
+    long newSupply = forwardparse(node->right, supply);
+    return newSupply;
+}
+
+long OrderTable::reverseparse(OrderTable::Node *node, long oldDemand) {
+    // reverse inorder traverse (descending order traverse) the order table and return the cumulative demand to the successor
+    if(node == nullptr)
+        return oldDemand;
+    long demand = reverseparse(node->right, oldDemand);
+    //do what you want with the current node: Display and add up the buyQty and check if max tradable
+    demand += node->data->buyQty;
+    node->data->demandQty = demand;
+    node->data->tradableQty = std::min(node->data->demandQty,node->data->supplyQty);
+    node->data->unmatchedQty = node->data->demandQty-node->data->supplyQty;
+    //cases for setting the equilibrium price
+    //case 1
+    if (node->data->tradableQty > maxTradableQty) {
+        maxTradableQty = node->data->tradableQty;
+        equilibriumRows.clear();
+        equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
+    }
+        //case 2
+    else if (node->data->tradableQty == maxTradableQty) {
+        equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
+    }
+    //case 3 and 4 can be added after prev day closing price is added
+    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<" | "<<node->data->tradableQty<<" | "<<node->data->unmatchedQty<<endl;
+    //go to the right subtree
+    long newDemand = reverseparse(node->left, demand);
+    return newDemand;
 }
 
 void OrderTable::calculateEQprice() {
@@ -41,6 +84,51 @@ void OrderTable::calculateEQprice() {
         //TODO- If after completing this loop, the equilibrium price is still 0, then case 3 or 4
     }
     cout<<"The equilibrium price is: "<<equilibriumPrice<<endl;
+}
+
+void OrderTable::categorizeOrder(OrderTable::Node *node) {
+    if(node == nullptr){
+        return;
+    }
+    //traverse to the left child
+    categorizeOrder(node->left);
+    //Process the current node. Each node can have multiple orders.
+    //Check if the node is eq node or not and categorize accordingly
+    if(node->data->price < equilibriumPrice) {
+        //add to category B or C (Eligible sell or Pending Buy)
+        for (auto order:node->data->orders) {   //new range based for-loop in C++
+            if(order->type == OrderPoint::BUY) {
+                pendingBuy->push(order);
+            }
+            else {
+                eligibleSell.push_front(order);
+            }
+        }
+    }
+    else if(node->data->price > equilibriumPrice) {
+        //add to category A or D (Eligible Buy or Pending Sell)
+        for (auto order:node->data->orders) {
+            if(order->type == OrderPoint::BUY) {
+                eligibleBuy.push_front(order);
+            }
+            else {
+                pendingSell->push(order);
+            }
+        }
+    }
+    else {
+        //add to A or B (Eligible buy or Eligible sell)
+        for (auto order:node->data->orders) {
+            if(order->type == OrderPoint::BUY) {
+                eligibleBuy.push_front(order);
+            }
+            else {
+                eligibleSell.push_front(order);
+            }
+        }
+    }
+    //traverse to the right child
+    categorizeOrder(node->right);
 }
 
 void OrderTable::matchPreOpen() {

@@ -17,7 +17,7 @@ void AVLTable::insert(OrderPoint* orderPoint) {
     cout<<"[AVL] Inserted Order: "<<orderPoint->type<<" | "<<orderPoint->orderID<<" | "<<orderPoint->price<<" | "<<orderPoint->shareQty<<endl;
 }
 
-AVLTable::Node* AVLTable::insert(Node* root, Node* parent,OrderPoint* data) {
+OrderTable::Node* AVLTable::insert(Node* root, Node* parent,OrderPoint* data) {
     //Recursively traverse the tree to insert the data at the correct position
     //Here if the Node having data element (TableRow) has the same price as the data (OrderPoint),
     //add to the list of orders in that TableRow
@@ -77,12 +77,11 @@ AVLTable::Node* AVLTable::insert(Node* root, Node* parent,OrderPoint* data) {
 }
 
 AVLTable::AVLTable() {
-    treeRoot = nullptr; //Initially, the treeRoot is NULL
-    maxTradableQty = 0;
+
 }
 
 
-int AVLTable::getHeight(AVLTable::Node *node) {
+int AVLTable::getHeight(OrderTable::Node *node) {
     if (node==nullptr){
         return -1;
     }
@@ -91,7 +90,7 @@ int AVLTable::getHeight(AVLTable::Node *node) {
     }
 }
 
-AVLTable::Node *AVLTable::rotateRR(AVLTable::Node *node) {
+OrderTable::Node *AVLTable::rotateRR(OrderTable::Node *node) {
     Node* X = node->right;
     node->right = X->left;
     X->left = node;
@@ -100,7 +99,7 @@ AVLTable::Node *AVLTable::rotateRR(AVLTable::Node *node) {
     return X;
 }
 
-AVLTable::Node *AVLTable::rotateLL(AVLTable::Node *node) {
+OrderTable::Node *AVLTable::rotateLL(OrderTable::Node *node) {
     Node* X = node->left;
     node->left = X->right;
     X->right = node;
@@ -109,115 +108,28 @@ AVLTable::Node *AVLTable::rotateLL(AVLTable::Node *node) {
     return X;
 }
 
-AVLTable::Node *AVLTable::rotateRL(AVLTable::Node *node) {
+OrderTable::Node *AVLTable::rotateRL(OrderTable::Node *node) {
+
     node->right = rotateLL(node->right);
     return rotateRR(node);
 }
 
-AVLTable::Node *AVLTable::rotateLR(AVLTable::Node *node) {
+OrderTable::Node *AVLTable::rotateLR(OrderTable::Node *node) {
     node->left = rotateRR(node->left);
     return rotateLL(node);
 }
 
-long AVLTable::forwardparse(Node *node, long oldSupply) {
-    // inorder traverse (ascending order traverse) the AVL tree and return the cumulative supply to the successor
-    if(node == nullptr)
-        return oldSupply;
-    long supply = forwardparse(node->left, oldSupply);
-    //do what you want with the current node: Display and add up the sellQty
-    supply += node->data->sellQty;
-    node->data->supplyQty = supply;
-//    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
-    //go to the right subtree
-    long newSupply = forwardparse(node->right, supply);
-    return newSupply;
-}
-
-long AVLTable::reverseparse(AVLTable::Node *node, long oldDemand) {
-    // reverse inorder traverse (descending order traverse) the AVL tree and return the cumulative demand to the successor
-    if(node == nullptr)
-        return oldDemand;
-    long demand = reverseparse(node->right, oldDemand);
-    //do what you want with the current node: Display and add up the buyQty and check if max tradable
-    demand += node->data->buyQty;
-    node->data->demandQty = demand;
-    node->data->tradableQty = std::min(node->data->demandQty,node->data->supplyQty);
-    node->data->unmatchedQty = node->data->demandQty-node->data->supplyQty;
-    //cases for setting the equilibrium price
-    //case 1
-    if (node->data->tradableQty > maxTradableQty) {
-        maxTradableQty = node->data->tradableQty;
-        equilibriumRows.clear();
-        equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
-    }
-    //case 2
-    else if (node->data->tradableQty == maxTradableQty) {
-        equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
-    }
-    //case 3 and 4 can be added after prev day closing price is added
-    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<" | "<<node->data->tradableQty<<" | "<<node->data->unmatchedQty<<endl;
-    //go to the right subtree
-    long newDemand = reverseparse(node->left, demand);
-    return newDemand;
-}
-
-
-void AVLTable::categorizeOrder(AVLTable::Node *node) {
-    if(node == nullptr){
-        return;
-    }
-    //traverse to the left child
-    categorizeOrder(node->left);
-    //Process the current node. Each node can have multiple orders.
-    //Check if the node is eq node or not and categorize accordingly
-    if(node->data->price < equilibriumPrice) {
-        //add to category B or C (Eligible sell or Pending Buy)
-        for (auto order:node->data->orders) {   //new range based for-loop in C++
-            if(order->type == OrderPoint::BUY) {
-                pendingBuy->push(order);
-            }
-            else {
-                eligibleSell.push_front(order);
-            }
-        }
-    }
-    else if(node->data->price > equilibriumPrice) {
-        //add to category A or D (Eligible Buy or Pending Sell)
-        for (auto order:node->data->orders) {
-            if(order->type == OrderPoint::BUY) {
-                eligibleBuy.push_front(order);
-            }
-            else {
-                pendingSell->push(order);
-            }
-        }
-    }
-    else {
-        //add to A or B (Eligible buy or Eligible sell)
-        for (auto order:node->data->orders) {
-            if(order->type == OrderPoint::BUY) {
-                eligibleBuy.push_front(order);
-            }
-            else {
-                eligibleSell.push_front(order);
-            }
-        }
-    }
-    //traverse to the right child
-    categorizeOrder(node->right);
-}
-
 
 long AVLTable::forwardparse() {
-    return forwardparse(treeRoot, 0);
+    return OrderTable::forwardparse(treeRoot, 0);
 }
 
 long AVLTable::reverseparse() {
-    return reverseparse(treeRoot, 0);
+    return OrderTable::reverseparse(treeRoot, 0);
 }
 
 void AVLTable::categorizeOrder() {
-    categorizeOrder(treeRoot);
+    OrderTable::categorizeOrder(treeRoot);
 }
 
 

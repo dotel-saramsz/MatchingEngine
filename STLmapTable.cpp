@@ -26,7 +26,7 @@ void STLmapTable::insert(OrderPoint *data) {
 }
 
 STLmapTable::STLmapTable() {
-    maxTradableQty = 0;
+
 }
 
 void STLmapTable::categorizeOrder() {

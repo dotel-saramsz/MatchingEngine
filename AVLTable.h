@@ -11,17 +11,6 @@
 
 class AVLTable: public OrderTable {
 private:
-    //Here, the class that represents the tree node is to be defined
-    class Node {
-    public:
-        Node* left;
-        Node* right;
-        TableRow* data; //Pointer because copying a complex object can have overhead
-        //CHECK: bad referencing due to out of scope?
-        int height;
-        Node* parent;
-    };
-    Node* treeRoot;
 
 public:
     void insert(OrderPoint*) override;
@@ -31,10 +20,6 @@ public:
     long forwardparse() override;
 
     long reverseparse() override;
-
-    long forwardparse(Node *, long);
-
-    long reverseparse(Node *, long);
 
     int getHeight(Node* node);
 
@@ -50,8 +35,6 @@ public:
     AVLTable();
 
     void categorizeOrder() override;
-
-    void categorizeOrder(Node* node);
 
 };
 
