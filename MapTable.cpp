@@ -186,7 +186,7 @@ long MapTable::forwardparse(MapTable::Node *node, long oldSupply) {
     //do what you want with the current node: Display and add up the sellQty
     supply += node->data->sellQty;
     node->data->supplyQty = supply;
-    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
+    // cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
     //go to the right subtree
     long newSupply = forwardparse(node->right, supply);
     return newSupply;
@@ -214,7 +214,7 @@ long MapTable::reverseparse(MapTable::Node *node, long oldDemand) {
         equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
     }
     //case 3 and 4 can be added after prev day closing price is added
-    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
+    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<" | "<<node->data->tradableQty<<" | "<<node->data->unmatchedQty<<endl;
     //go to the right subtree
     long newDemand = reverseparse(node->left, demand);
     return newDemand;
@@ -233,9 +233,10 @@ void MapTable::calculateEQprice() {
     }
     else {
         vector<pair<float,long> >::iterator itr;
-        long unmatchedQty = abs(equilibriumRows.front().second);
+        unmatchedQty = equilibriumRows.front().second;
+        equilibriumPrice = equilibriumRows.front().first;
         for(itr = equilibriumRows.begin(); itr != equilibriumRows.end(); itr++) {
-            if(abs(itr->second)<unmatchedQty) {
+            if(abs(itr->second)<abs(unmatchedQty)) {
                 unmatchedQty = abs(itr->second);
                 equilibriumPrice = itr->first;
             }
@@ -260,7 +261,7 @@ void MapTable::categorizeOrder(MapTable::Node *node) {
                 pendingBuy->push(order);
             }
             else {
-                eligibleSell.push_back(order);
+                eligibleSell.push_front(order);
             }
         }
     }
@@ -268,7 +269,7 @@ void MapTable::categorizeOrder(MapTable::Node *node) {
         //add to category A or D (Eligible Buy or Pending Sell)
         for (auto order:node->data->orders) {
             if(order->type == OrderPoint::BUY) {
-                eligibleBuy.push_back(order);
+                eligibleBuy.push_front(order);
             }
             else {
                 pendingSell->push(order);
@@ -279,10 +280,10 @@ void MapTable::categorizeOrder(MapTable::Node *node) {
         //add to A or B (Eligible buy or Eligible sell)
         for (auto order:node->data->orders) {
             if(order->type == OrderPoint::BUY) {
-                eligibleBuy.push_back(order);
+                eligibleBuy.push_front(order);
             }
             else {
-                eligibleSell.push_back(order);
+                eligibleSell.push_front(order);
             }
         }
     }

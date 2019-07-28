@@ -12,6 +12,7 @@
 #include "BuyOrderBook.h"
 #include "SellOrderBook.h"
 #include <vector>
+#include <list>
 
 
 class OrderTable {
@@ -23,8 +24,8 @@ protected:
     long unmatchedQty;
 public:
     //The categorical containers where orders are placed into as they are parsed after eq price calculation
-    vector<OrderPoint*> eligibleBuy;
-    vector<OrderPoint*> eligibleSell;
+    list<OrderPoint*> eligibleBuy;
+    list<OrderPoint*> eligibleSell;
     BuyOrderBook* pendingBuy;
     SellOrderBook* pendingSell;
 

@@ -166,7 +166,7 @@ long AVLTable::reverseparse(AVLTable::Node *node, long oldDemand) {
         equilibriumRows.push_back(make_pair(node->data->price,node->data->unmatchedQty));
     }
     //case 3 and 4 can be added after prev day closing price is added
-//    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<endl;
+    cout<<node->data->price<<" | "<<node->data->buyQty<<" | "<<node->data->sellQty<<" | "<<node->data->demandQty<<" | "<<node->data->supplyQty<<" | "<<node->data->tradableQty<<" | "<<node->data->unmatchedQty<<endl;
     //go to the right subtree
     long newDemand = reverseparse(node->left, demand);
     return newDemand;
@@ -187,12 +187,14 @@ void AVLTable::calculateEQprice() {
     else {
         vector<pair<float,long> >::iterator itr;
         unmatchedQty = equilibriumRows.front().second;
+        equilibriumPrice = equilibriumRows.front().first;
         for(itr = equilibriumRows.begin(); itr != equilibriumRows.end(); itr++) {
             if(abs(itr->second) < abs(unmatchedQty)) {
                 unmatchedQty = itr->second;
                 equilibriumPrice = itr->first;
             }
         }
+        //TODO- If after completing this loop, the equilibrium price is still 0, then case 3 or 4
     }
     cout<<"The equilibrium price is: "<<equilibriumPrice<<endl;
 }
@@ -212,7 +214,7 @@ void AVLTable::categorizeOrder(AVLTable::Node *node) {
                 pendingBuy->push(order);
             }
             else {
-                eligibleSell.push_back(order);
+                eligibleSell.push_front(order);
             }
         }
     }
@@ -220,7 +222,7 @@ void AVLTable::categorizeOrder(AVLTable::Node *node) {
         //add to category A or D (Eligible Buy or Pending Sell)
         for (auto order:node->data->orders) {
             if(order->type == OrderPoint::BUY) {
-                eligibleBuy.push_back(order);
+                eligibleBuy.push_front(order);
             }
             else {
                 pendingSell->push(order);
@@ -231,10 +233,10 @@ void AVLTable::categorizeOrder(AVLTable::Node *node) {
         //add to A or B (Eligible buy or Eligible sell)
         for (auto order:node->data->orders) {
             if(order->type == OrderPoint::BUY) {
-                eligibleBuy.push_back(order);
+                eligibleBuy.push_front(order);
             }
             else {
-                eligibleSell.push_back(order);
+                eligibleSell.push_front(order);
             }
         }
     }

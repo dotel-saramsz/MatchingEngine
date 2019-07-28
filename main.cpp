@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
         orderTable = new STLmapTable;
     }
 
-    FileReader orderFile = FileReader("orders.txt");
+    FileReader orderFile = FileReader(argv[2]);
     orderFile.fillOrderTable(orderTable);
     matchStartTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
 

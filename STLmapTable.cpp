@@ -48,7 +48,7 @@ void STLmapTable::calculateEQprice() {
         data = it->second;
         demand += data->buyQty;
         data->demandQty = demand;
-        data->tradableQty = min(data->demandQty,data->sellQty);
+        data->tradableQty = min(data->demandQty,data->supplyQty);
         data->unmatchedQty = data->demandQty-data->supplyQty;
         //cases for setting the equilibrium price
         //case 1
@@ -61,6 +61,8 @@ void STLmapTable::calculateEQprice() {
         else if (data->tradableQty == maxTradableQty) {
             equilibriumRows.push_back(make_pair(data->price,data->unmatchedQty));
         }
+        cout<<data->price<<" | "<<data->buyQty<<" | "<<data->sellQty<<" | "<<data->demandQty<<" | "<<data->supplyQty<<" | "<<data->tradableQty<<" | "<<data->unmatchedQty<<endl;
+    
     }
     //Print the cumulative sell and buy as supply and demand
     cout<<"The cumulative supply is: "<<supply<<endl;
@@ -73,6 +75,7 @@ void STLmapTable::calculateEQprice() {
     else {
         vector<pair<float,long> >::iterator itr;
         unmatchedQty = equilibriumRows.front().second;
+        equilibriumPrice = equilibriumRows.front().first;
         for(itr = equilibriumRows.begin(); itr != equilibriumRows.end(); itr++) {
             if(abs(itr->second) < abs(unmatchedQty)) {
                 unmatchedQty = itr->second;
@@ -81,9 +84,6 @@ void STLmapTable::calculateEQprice() {
         }
     }
     cout<<"The equilibrium price is: "<<equilibriumPrice<<endl;
-
-
-
 }
 
 int STLmapTable::getHeight() {
@@ -106,7 +106,7 @@ void STLmapTable::categorizeOrder() {
                     pendingBuy->push(order);
                 }
                 else {
-                    eligibleSell.push_back(order);
+                    eligibleSell.push_front(order);
                 }
             }
         }
@@ -114,7 +114,7 @@ void STLmapTable::categorizeOrder() {
             //add to category A or D (Eligible Buy or Pending Sell)
             for (auto order:data->orders) {
                 if(order->type == OrderPoint::BUY) {
-                    eligibleBuy.push_back(order);
+                    eligibleBuy.push_front(order);
                 }
                 else {
                     pendingSell->push(order);
@@ -125,10 +125,10 @@ void STLmapTable::categorizeOrder() {
             //add to A or B (Eligible buy or Eligible sell)
             for (auto order:data->orders) {
                 if(order->type == OrderPoint::BUY) {
-                    eligibleBuy.push_back(order);
+                    eligibleBuy.push_front(order);
                 }
                 else {
-                    eligibleSell.push_back(order);
+                    eligibleSell.push_front(order);
                 }
             }
         }
