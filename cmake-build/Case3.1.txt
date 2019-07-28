@@ -1,0 +1,23 @@
+Buy		Sell		Equilibrium Price Calculation table						
+Price	Qty	Price	Qty				Demand	Supply	Max Tradable Quantity	Unmatched Orders
+398	400	398	255				2010	255	255	1755
+399	298	399	326				1610	581	581	1029
+400	312	400	125				1312	706	706	606
+401	50	401	70				1000	776	776	224
+402	154	402	265				950	1041	950	91
+403	236	403	105				796	1146	796	350
+404	305	404	165				560	1311	560	751
+405	255	405	205				255	1516	255	1261
+									950	
+										
+Categories								Trades		
+A		B				Trade No	Buy ID	Sell ID	Trade Quantity	
+Buy	Qty	Sell	Qty			1	7	3	154	
+402	154	398	255			2	8	3	101	
+403	236	399	326			3	8	4	135	
+404	305	400	125			4	9	4	191	
+405	255	401	70			5	9	5	114	
+		402	265			6	10	5	11	
+						7	10	6	70	
+						8	10	7	174	
+								Total Trades	950	
