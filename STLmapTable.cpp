@@ -29,49 +29,7 @@ STLmapTable::STLmapTable() {
 
 }
 
-void STLmapTable::categorizeOrder() {
-    for(auto it : Node) {
-        auto data = it.second;
-        //Process the current node. Each node can have multiple orders.
-        //Check if the node is eq node or not and categorize accordingly
-        if(data->price < equilibriumPrice) {
-            //add to category B or C (Eligible sell or Pending Buy)
-            for (auto order:data->orders) {   //new range based for-loop in C++
-                if(order->type == OrderPoint::BUY) {
-                    pendingBuy->push(order);
-                }
-                else {
-                    eligibleSell.push_front(order);
-                }
-            }
-        }
-        else if(data->price > equilibriumPrice) {
-            //add to category A or D (Eligible Buy or Pending Sell)
-            for (auto order:data->orders) {
-                if(order->type == OrderPoint::BUY) {
-                    eligibleBuy.push_front(order);
-                }
-                else {
-                    pendingSell->push(order);
-                }
-            }
-        }
-        else {
-            //add to A or B (Eligible buy or Eligible sell)
-            for (auto order:data->orders) {
-                if(order->type == OrderPoint::BUY) {
-                    eligibleBuy.push_front(order);
-                }
-                else {
-                    eligibleSell.push_front(order);
-                }
-            }
-        }
-
-    }
-}
-
-long STLmapTable::forwardparse() {
+long STLmapTable::  forwardparse() {
     long supply = 0;
     TableRow* data;
 
@@ -108,5 +66,65 @@ long STLmapTable::reverseparse() {
     }
 
     return demand;
+}
+
+void STLmapTable::categorizeOrder() {
+    for(auto it : Node) {
+        auto data = it.second;
+
+        //Process the current node. Each node can have multiple orders.
+        //Check if the node is eq node or not and categorize accordingly
+        if(data->price < equilibriumPrice) {
+            //add to category B or C (Eligible sell or Pending Buy)
+            for (auto order:data->orders) {   //new range based for-loop in C++
+                if(order->type == OrderPoint::BUY) {
+                    pendingBuy->push(order);
+                }
+                else {
+                    eligibleSell.push_front(order);
+                }
+            }
+        }
+        else if(data->price > equilibriumPrice) {
+            //add to category A or D (Eligible Buy or Pending Sell)
+            for (auto order:data->orders) {
+                if(order->type == OrderPoint::BUY) {
+                    eligibleBuy.push_front(order);
+                }
+                else {
+                    pendingSell->push(order);
+                }
+            }
+        }
+        else {
+            //add to A or B (Eligible buy or Eligible sell)
+            for (auto order:data->orders) {
+                if(order->type == OrderPoint::BUY) {
+                    if(matchCase == OrderTable::CASE1) {
+                        eligibleBuy.push_front(order);
+                    }
+                    else if(matchCase == OrderTable::CASE2) {
+                        if(demandGreater)
+                            pendingBuy->push(order);
+                        else
+                            eligibleBuy.push_front(order);
+                    }
+
+                }
+                else {
+                    if(matchCase == OrderTable::CASE1) {
+                        eligibleSell.push_front(order);
+                    }
+                    else if(matchCase == OrderTable::CASE2) {
+                        if(demandGreater)
+                            eligibleSell.push_front(order);
+                        else
+                            pendingSell->push(order);
+                    }
+                }
+            }
+        }
+
+    }
 }
 

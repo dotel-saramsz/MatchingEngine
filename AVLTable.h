@@ -17,10 +17,6 @@ public:
 
     Node* insert(Node* root, Node* parent, OrderPoint* data);
 
-    long forwardparse() override;
-
-    long reverseparse() override;
-
     int getHeight(Node* node);
 
     //AVL Rotations:
@@ -33,8 +29,6 @@ public:
     Node* rotateLR(Node* node);
 
     AVLTable();
-
-    void categorizeOrder() override;
 
 };
 

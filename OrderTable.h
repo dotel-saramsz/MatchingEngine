@@ -37,22 +37,26 @@ protected:
 
 public:
     //The categorical containers where orders are placed into as they are parsed after eq price calculation
+    bool demandGreater;
+    enum MatchCase {CASE1, CASE2};
+    MatchCase matchCase;
     list<OrderPoint*> eligibleBuy;
     list<OrderPoint*> eligibleSell;
     BuyOrderBook* pendingBuy;
     SellOrderBook* pendingSell;
+    string orderFilename;
 
     long forwardparse(Node *, long);
     long reverseparse(Node *, long);
 
-    virtual long forwardparse() = 0;
-    virtual long reverseparse() = 0;
+    virtual long forwardparse();
+    virtual long reverseparse();
 
     virtual void insert(OrderPoint*) = 0;
     void calculateEQprice();
 
     void categorizeOrder(Node* );
-    virtual void categorizeOrder() = 0;
+    virtual void categorizeOrder();
 
     void matchPreOpen();
 

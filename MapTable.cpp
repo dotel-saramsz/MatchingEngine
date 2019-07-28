@@ -169,14 +169,3 @@ void MapTable::fixInsertViolation(OrderTable::Node *&node) {
 
 }
 
-long MapTable::forwardparse() {
-    return OrderTable::forwardparse(treeRoot, 0);
-}
-
-long MapTable::reverseparse() {
-    return OrderTable::reverseparse(treeRoot, 0);
-}
-
-void MapTable::categorizeOrder() {
-    OrderTable::categorizeOrder(treeRoot);
-}

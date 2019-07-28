@@ -8,17 +8,16 @@
 
 #include "Transaction.h"
 #include <fstream>
+#include <string>
 
 class TransactionLog {
 private:
-    TransactionLog();
-    TransactionLog(const TransactionLog&);
-    TransactionLog& operator=(const TransactionLog&);
-    static TransactionLog* loggerInstance;
     fstream logfile;
 public:
-    static TransactionLog* Instance();
+    TransactionLog(string filename);
+    ~TransactionLog();
     void saveToFile(Transaction*);
+
 
 };
 

@@ -32,13 +32,7 @@ public:
 
     Node* insert(Node* root, Node* parent, OrderPoint* data);
 
-    long forwardparse() override;
-
-    long reverseparse() override;
-
     MapTable(); //constructor
-
-    void categorizeOrder() override;
 
 };
 

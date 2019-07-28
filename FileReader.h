@@ -2,8 +2,8 @@
 // Created by dotelsaramsha on 5/1/19.
 //
 
-#ifndef ORDERMATCHING_CSVREADER_H
-#define ORDERMATCHING_CSVREADER_H
+#ifndef ORDERMATCHING_FILEREADER_H
+#define ORDERMATCHING_FILEREADER_H
 
 #include <fstream>
 #include <string>
@@ -13,6 +13,7 @@
 
 class FileReader {
 private:
+    string filename;
     fstream csvFile;
 public:
     FileReader (string);
@@ -20,4 +21,4 @@ public:
 };
 
 
-#endif //ORDERMATCHING_CSVREADER_H
+#endif //ORDERMATCHING_FILEREADER_H

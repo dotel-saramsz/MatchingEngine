@@ -120,16 +120,4 @@ OrderTable::Node *AVLTable::rotateLR(OrderTable::Node *node) {
 }
 
 
-long AVLTable::forwardparse() {
-    return OrderTable::forwardparse(treeRoot, 0);
-}
-
-long AVLTable::reverseparse() {
-    return OrderTable::reverseparse(treeRoot, 0);
-}
-
-void AVLTable::categorizeOrder() {
-    OrderTable::categorizeOrder(treeRoot);
-}
-
 
