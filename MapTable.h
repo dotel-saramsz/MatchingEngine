@@ -24,20 +24,12 @@ private:
         Node* right;
         Node* parent;
         TableRow* data; //Pointer because copying a complex object can have overhead
-        //CHECK: bad referencing due to out of scope?
-        int height;
-
     };
+
     Node* treeRoot;
 
 public:
     void insert(OrderPoint*) override;
-
-    void remove(OrderPoint*) override;
-
-    void lookup(OrderPoint*) override;
-
-    void calculateEQprice() override;
 
     void rotateLeft(Node *&);
 
@@ -51,13 +43,17 @@ public:
 
     Node* insert(Node* root, Node* parent, OrderPoint* data);
 
+    long forwardparse() override;
+
+    long reverseparse() override;
+
     long forwardparse(Node *, long);
 
     long reverseparse(Node *, long);
 
     MapTable(); //constructor
 
-    void matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) override;
+    void categorizeOrder() override;
 
     void categorizeOrder(Node *node);
 };

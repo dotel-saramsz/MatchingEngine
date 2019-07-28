@@ -18,6 +18,9 @@
 class OrderTable {
 protected:
     //Common members for any implementation of the order table
+    class Node{
+
+    };
     float equilibriumPrice;
     vector<pair<float,long> > equilibriumRows;    //stores those orders which have the maximal tradable qty in their tablerow
     long maxTradableQty;
@@ -29,11 +32,13 @@ public:
     BuyOrderBook* pendingBuy;
     SellOrderBook* pendingSell;
 
+    virtual long forwardparse() = 0;
+    virtual long reverseparse() = 0;
+
     virtual void insert(OrderPoint*) = 0;
-    virtual void remove(OrderPoint*) = 0;
-    virtual void lookup(OrderPoint*) = 0;
-    virtual void calculateEQprice() = 0;
-    virtual void matchPreOpen(BuyOrderBook*, SellOrderBook*) = 0;
+    void calculateEQprice();
+    virtual void categorizeOrder() = 0;
+    void matchPreOpen();
 
     OrderTable();
 

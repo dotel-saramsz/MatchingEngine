@@ -31,8 +31,9 @@ int main(int argc, char** argv) {
     else {
         orderTable = new STLmapTable;
     }
+    string filepath = string("../orders/") + string(argv[2]);
 
-    FileReader orderFile = FileReader(argv[2]);
+    FileReader orderFile = FileReader(filepath);
     orderFile.fillOrderTable(orderTable);
     matchStartTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
 
@@ -40,12 +41,8 @@ int main(int argc, char** argv) {
     //compute the cumulative demand in a backward parse through the sorted table
     orderTable->calculateEQprice();
 
-    //declare the Buy and Sell Orderbooks that are to be filled with the pending buy and sell orders
-    auto pendingBuy = new BuyOrderBook;
-    auto pendingSell = new SellOrderBook;
-
     //call the preorder matching on the orderTable. Also send the two orderbooks to be filled with pending orders as this operation takes place
-    orderTable->matchPreOpen(pendingBuy, pendingSell);
+    orderTable->matchPreOpen();
 
     //display the pending buy and sell orders
     long endTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();

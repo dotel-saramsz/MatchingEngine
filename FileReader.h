@@ -6,6 +6,7 @@
 #define ORDERMATCHING_CSVREADER_H
 
 #include <fstream>
+#include <string>
 #include "OrderPoint.h"
 #include "OrderTable.h"
 
@@ -14,7 +15,7 @@ class FileReader {
 private:
     fstream csvFile;
 public:
-    FileReader (const char*);
+    FileReader (string);
     void fillOrderTable(OrderTable*);
 };
 

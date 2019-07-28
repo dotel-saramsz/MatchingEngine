@@ -26,15 +26,11 @@ private:
 public:
     void insert(OrderPoint*) override;
 
-    void remove(OrderPoint*) override;
-
-    void lookup(OrderPoint*) override;
-
-    void calculateEQprice() override;
-
     Node* insert(Node* root, Node* parent, OrderPoint* data);
 
-    Node* lookup(TableRow& data);
+    long forwardparse() override;
+
+    long reverseparse() override;
 
     long forwardparse(Node *, long);
 
@@ -53,7 +49,7 @@ public:
 
     AVLTable();
 
-    void matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) override;
+    void categorizeOrder() override;
 
     void categorizeOrder(Node* node);
 

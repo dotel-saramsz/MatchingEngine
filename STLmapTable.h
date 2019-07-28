@@ -20,23 +20,13 @@ private:
 public:
     void insert(OrderPoint*) override;
 
-    void remove(OrderPoint*) override;
+    long forwardparse() override;
 
-    void lookup(OrderPoint*) override;
-
-    void calculateEQprice() override;
-
-    long forwardparse(long);
-
-    long reverseparse(long);
-
-    int getHeight();
+    long reverseparse() override;
 
     STLmapTable();
 
-    void matchPreOpen(BuyOrderBook *pendingBuy, SellOrderBook *pendingSell) override;
-
-    void categorizeOrder();
+    void categorizeOrder() override;
 
 };
 

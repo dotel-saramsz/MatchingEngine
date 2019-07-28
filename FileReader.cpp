@@ -9,8 +9,8 @@
 
 using namespace std;
 
-FileReader::FileReader(const char* filename) {
-    csvFile.open(filename,ios::in);
+FileReader::FileReader(string filename) {
+    csvFile.open(filename, ios::in);
     if(!csvFile.is_open()) {
         throw "File Opening Error";
     }

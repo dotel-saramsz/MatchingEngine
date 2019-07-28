@@ -35,13 +35,6 @@ void MapTable::insert(OrderPoint* orderPoint) {
     fixInsertViolation(treeRoot);
     cout<<"[MAP] Inserted/Updated treeNode with Price= "<<orderPoint->price<<endl;
 }
-void MapTable::remove(OrderPoint* orderPoint) {
-
-}
-
-void MapTable::lookup(OrderPoint* orderPoint) {
-
-}
 
 //left rotation : same as AVL
 void MapTable::rotateLeft(MapTable::Node *&node) {
@@ -220,31 +213,7 @@ long MapTable::reverseparse(MapTable::Node *node, long oldDemand) {
     return newDemand;
 
 }
-void MapTable::calculateEQprice() {
-    // Call Inorder traversal of the AVL tree which also calculates the cumulative supply at each price point
-    long totalSupply = forwardparse(treeRoot, 0);
-    cout<<"The cumulative supply is: "<<totalSupply<<endl;
-    // Call reverse Inorder traversal of the AVL tree and also calculate the cumulative demand and max tradable qty and equilibrium price
-    long totalDemand = reverseparse(treeRoot,0);
-    cout<<"The cumulative demand is: "<<totalDemand<<endl;
-    //calculate equilibrium price:
-    if(equilibriumRows.size() == 1) {
-        equilibriumPrice = equilibriumRows.back().first;
-    }
-    else {
-        vector<pair<float,long> >::iterator itr;
-        unmatchedQty = equilibriumRows.front().second;
-        equilibriumPrice = equilibriumRows.front().first;
-        for(itr = equilibriumRows.begin(); itr != equilibriumRows.end(); itr++) {
-            if(abs(itr->second)<abs(unmatchedQty)) {
-                unmatchedQty = abs(itr->second);
-                equilibriumPrice = itr->first;
-            }
-        }
-    }
-    cout<<"[MAP]The equilibrium price is: "<<equilibriumPrice<<endl;
 
-}
 
 void MapTable::categorizeOrder(MapTable::Node *node) {
     if(node == nullptr){
@@ -291,57 +260,14 @@ void MapTable::categorizeOrder(MapTable::Node *node) {
     categorizeOrder(node->right);
 }
 
-void MapTable::matchPreOpen(BuyOrderBook *pendingB, SellOrderBook *pendingS) {
-    pendingBuy = pendingB;
-    pendingSell = pendingS;
-    //inorder traversal through the tree to separate the orders into the 4 categories:
-    //1.Eligible Buy(Vec) 2.Eligible Sell(Vec) 3.Pending Buy(BuyOrderBook) 4.Pending Sell(SellOrderBook)
+long MapTable::forwardparse() {
+    return forwardparse(treeRoot, 0);
+}
+
+long MapTable::reverseparse() {
+    return reverseparse(treeRoot, 0);
+}
+
+void MapTable::categorizeOrder() {
     categorizeOrder(treeRoot);
-    //match the orders
-    while(!eligibleBuy.empty() && !eligibleSell.empty()) {
-        //match the orders until either of the containers get emptied
-        OrderPoint* buyOrder = eligibleBuy.back();
-        OrderPoint* sellOrder = eligibleSell.back();
-        eligibleBuy.pop_back();
-        eligibleSell.pop_back();
-        //handle complete or partial transaction
-        long matchedQty;
-        if(buyOrder->shareQty > sellOrder->shareQty) {
-            //buy order is partially filled
-            matchedQty = sellOrder->shareQty;
-            buyOrder->shareQty -= matchedQty;
-            eligibleBuy.push_back(buyOrder);
-        }
-        else if(buyOrder->shareQty < sellOrder->shareQty) {
-            //sell order is partially filled
-            matchedQty = buyOrder->shareQty;
-            sellOrder->shareQty -= matchedQty;
-            eligibleSell.push_back(sellOrder);
-        }
-        else {
-            matchedQty = buyOrder->shareQty; //same as sellOrder->shareQty
-        }
-
-        //create a Transaction object
-        Transaction* transaction = new Transaction(buyOrder->orderID,sellOrder->orderID,buyOrder->companyID,equilibriumPrice,matchedQty);
-        transaction->display();
-
-        long endTime = chrono::duration_cast<chrono::nanoseconds>(chrono::system_clock::now().time_since_epoch()).count();
-        cout<<"Time taken for matching: "<<static_cast<double>(endTime-matchStartTime)/1000000<<" milliseconds"<<endl;
-
-        TransactionLog::Instance()->saveToFile(transaction);
-    }
-
-    while(!eligibleBuy.empty()) {
-        //some buy orders couldn't be matched. So, add them as pending buy orders
-        pendingBuy->push(eligibleBuy.back());
-        eligibleBuy.pop_back();
-    }
-
-    while(!eligibleSell.empty()) {
-        //some sell orders couldn't be matched. So, add them as pending sell orders
-        pendingSell->push(eligibleSell.back());
-        eligibleSell.pop_back();
-    }
-
 }
